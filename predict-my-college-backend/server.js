@@ -1,11 +1,11 @@
 const express = require("express");
-const cors    = require("cors");
-const path    = require("path");
+const cors = require("cors");
+const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 
 require("dotenv").config();
 
-const app    = express();
+const app = express();
 const prisma = new PrismaClient();
 
 const { verifyToken, requireAuth } = require("./middleware/authMiddleware");
@@ -32,13 +32,13 @@ app.use(express.json());
 app.use(verifyToken);
 
 // ─── External routers ─────────────────────────────────────────────────────
-const authRoutes    = require("./routes/authRoutes");
-const adminRoutes   = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const collegeRoutes = require("./routes/collegeRoutes");
 
-app.use("/api",         collegeRoutes);
-app.use("/api/auth",    authRoutes);
-app.use("/api/admin",   adminRoutes);
+app.use("/api", collegeRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 
 // ─── GET /api/branches ────────────────────────────────────────────────────
@@ -46,10 +46,10 @@ app.get("/api/branches", requireAuth, async (req, res) => {
   try {
     const yearFilter = req.query.year ? { year: parseInt(req.query.year, 10) } : {};
     const rows = await prisma.college.findMany({
-      where:    yearFilter,
-      select:   { branch: true },
+      where: yearFilter,
+      select: { branch: true },
       distinct: ["branch"],
-      orderBy:  { branch: "asc" },
+      orderBy: { branch: "asc" },
     });
     res.json(rows.map((r) => r.branch).filter(Boolean));
   } catch (err) {
@@ -63,10 +63,10 @@ app.get("/api/categories", requireAuth, async (req, res) => {
   try {
     const yearFilter = req.query.year ? { year: parseInt(req.query.year, 10) } : {};
     const rows = await prisma.college.findMany({
-      where:    yearFilter,
-      select:   { category: true },
+      where: yearFilter,
+      select: { category: true },
       distinct: ["category"],
-      orderBy:  { category: "asc" },
+      orderBy: { category: "asc" },
     });
     res.json(rows.map((r) => r.category).filter(Boolean));
   } catch (err) {
@@ -83,8 +83,8 @@ app.get("/api/predict", requireAuth, async (req, res) => {
       where: {
         percentile: { lte: Number(percentile || 100) },
         ...(category && { category: { equals: category, mode: "insensitive" } }),
-        ...(branch   && { branch:   { equals: branch,   mode: "insensitive" } }),
-        ...(year     && { year:     parseInt(year, 10) }),
+        ...(branch && { branch: { equals: branch, mode: "insensitive" } }),
+        ...(year && { year: parseInt(year, 10) }),
       },
       orderBy: { percentile: "desc" },
     });
@@ -101,10 +101,10 @@ app.get("/api/colleges", requireAuth, async (req, res) => {
   const year = req.query.year ? parseInt(req.query.year, 10) : null;
   try {
     const rows = await prisma.college.findMany({
-      where:    year ? { year } : {},
-      select:   { name: true, city: true },
+      where: year ? { year } : {},
+      select: { name: true, city: true },
       distinct: ["name"],
-      orderBy:  { name: "asc" },
+      orderBy: { name: "asc" },
     });
     res.json({ success: true, data: rows });
   } catch (err) {
@@ -128,20 +128,20 @@ app.get("/api/health", async (_req, res) => {
 });
 
 // ─── GET / ───────────────────────────────────────────────────────────────
-app.get("/", (_req, res) => {
-  res.json({
-    message: "API is running ✅",
-    version: "1.0.0",
-    endpoints: {
-      predict:    "GET /api/predict?percentile=95&category=OPEN&branch=Computer Engineering",
-      branches:   "GET /api/branches",
-      categories: "GET /api/categories",
-      health:     "GET /api/health",
-      login:      "POST /api/auth/login",
-      register:   "POST /api/auth/register",
-    },
-  });
-});
+// app.get("/", (_req, res) => {
+//   res.json({
+//     message: "API is running ✅",
+//     version: "1.0.0",
+//     endpoints: {
+//       predict:    "GET /api/predict?percentile=95&category=OPEN&branch=Computer Engineering",
+//       branches:   "GET /api/branches",
+//       categories: "GET /api/categories",
+//       health:     "GET /api/health",
+//       login:      "POST /api/auth/login",
+//       register:   "POST /api/auth/register",
+//     },
+//   });
+// });
 
 // ─── GET /api/options ─────────────────────────────────────────────────────
 // Redundant check: ensure /api/options is reachable
@@ -154,7 +154,7 @@ app.get("/api/options", requireAuth, async (req, res) => {
     res.json({
       success: true,
       data: {
-        branches:   branchRows.map((b) => b.branch).filter(Boolean),
+        branches: branchRows.map((b) => b.branch).filter(Boolean),
         categories: categoryRows.map((c) => c.category).filter(Boolean),
       },
     });

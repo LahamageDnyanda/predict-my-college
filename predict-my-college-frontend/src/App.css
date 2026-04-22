@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI';
+  background: #f0f4f8;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.form-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input, select {
+  width: 80%;
+  padding: 10px;
+  margin: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.card {
+  background: white;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.badge.green { background: green; color: white; }
+.badge.yellow { background: orange; color: white; }
+.badge.red { background: red; color: white; }
+
+.loader {
+  margin-top: 20px;
+}
